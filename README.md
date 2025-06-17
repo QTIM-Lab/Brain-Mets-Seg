@@ -1,2 +1,2 @@
 # Brain-Mets-Seg
-A repository containing code to segment brain metastases on T1 contrast enhanced MR scans
+This repository contains code to automatically segment brain metastases on T1 contrast enhanced MR examinations using a 3D U-Net.
