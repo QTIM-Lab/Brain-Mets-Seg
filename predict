@@ -1,5 +1,4 @@
-#CUDA_VISIBLE_DEVICES=0 WORLD_SIZE=1 python predict.py --data '/autofs/cluster/qtim/users/jn85/DeepLearningExamples/TensorFlow2/Segmentation/nnUNet/data/METS_Jay/_test_set_patients.csv' --fold 0
-#CUDA_VISIBLE_DEVICES=0 WORLD_SIZE=1 python predict.py --fold 0
+#!/usr/local/bin/python
 import os
 import time
 import numpy as np
@@ -16,13 +15,6 @@ from runtime.checkpoint import load_model
 from runtime.logging import get_logger
 from runtime.run import evaluate, export_model, predict, train
 from runtime.utils import hvd_init, set_seed, set_tf_flags
-
-def nested_folder_filepaths(nifti_dir, vols_to_process=None):
-    if vols_to_process == None:
-        relative_filepaths = [os.path.relpath(directory_paths, nifti_dir) for (directory_paths, directory_names, filenames) in os.walk(nifti_dir) if len(filenames)!=0]
-    else:
-        relative_filepaths = [os.path.relpath(directory_paths, nifti_dir) for (directory_paths, directory_names, filenames) in os.walk(nifti_dir) if all(vol_to_process in filenames if not isinstance(vol_to_process, list) else any(vol_to_process2 in filenames for vol_to_process2 in vol_to_process) for vol_to_process in vols_to_process)]
-    return relative_filepaths
 
 def predict_on_patient(full_patient_path, vol_name, fold, patch_size, index_patient, num_patients, save_logits=True, save_binary_label=True, logits_file_name='logits_fold', binary_label_file_name='model_fold', timer=True):
     if timer == True:
@@ -62,6 +54,7 @@ def predict_on_patient(full_patient_path, vol_name, fold, patch_size, index_pati
 
 if __name__ == "__main__":
     args = get_main_args()
+    args.fold = 0
     args.exec_mode = 'predict'
     args.gpus = 1
     args.dim = 3
@@ -91,24 +84,13 @@ if __name__ == "__main__":
     args.blend_mode = 'gaussian'
     args.negative_slope = 0.01 
     args.use_hvd = False
-    args.results = '/autofs/cluster/qtim/users/jn85/DeepLearningExamples/TensorFlow2/Segmentation/nnUNet/results_mets_fold' + str(args.fold) + '_dice_bound_ce/'
-    args.ckpt_dir = '/autofs/cluster/qtim/users/jn85/DeepLearningExamples/TensorFlow2/Segmentation/nnUNet/results_mets_fold' + str(args.fold) + '_dice_bound_ce/ckpt/best/'
+    args.results = '/workspace/brain_mets_seg/trained_models'
+    args.ckpt_dir = '/workspace/brain_mets_seg/trained_models/Model_' + str(args.fold)
     hvd_init(args.use_hvd)
     if args.seed is not None:
         set_seed(args.seed)
     set_tf_flags(args)
     model = load_model(args)
-    #
-    '''
-    #DIRECTLY PREDICT ON ONE IMAGE
-    patient_path = '/autofs/cluster/qtim/datasets/private/METS_Jay/BRATS_BrainMets/ASNR-MICCAI-BraTS2023-MET-Challenge-TrainingData/BraTS-MET-00406-000/'
-    os.chdir(patient_path)
-    nib_vol = nib.load('T1C_RAI_RESAMPLED_N4_SS_REG_NORM.nii.gz')
-    x = tf.cast(tf.constant(np.expand_dims(nib_vol.get_fdata(), axis=(0,-1))), tf.float32)
-    y = model.inference(x)
-    nib_vol_save = nib.Nifti1Image((y[0,...,0].numpy() > 0).astype(int), affine=nib_vol.affine, header=nib_vol.header)
-    nib.save(nib_vol_save, 'model_nnunet-label.nii.gz')
-    '''
     #
     #PREDICT ON IMAGES FROM CSV
     vol_name = 'T1C_RAI_RESAMPLED_N4_SS_REG_NORM.nii.gz'
@@ -119,13 +101,3 @@ if __name__ == "__main__":
     for i, patient in enumerate(patients):
         predict_on_patient(patient + '/', vol_name, str(args.fold), patch_size, i, num_patients)
     #
-    '''
-    #PREDICT ON FILE DIRECTORY
-    vol_name = 'T1C_RAI_RESAMPLED_N4_SS_REG_NORM.nii.gz'
-    patch_size = np.array([128]*3)
-    folder_dir = '/autofs/cluster/qtim/datasets/private/METS_Jay/Ray_set1_nii_new_BrainMets/'
-    patients = sorted(nested_folder_filepaths(folder_dir, vols_to_process=[vol_name]))
-    num_patients = len(patients)
-    for i, patient in enumerate(patients):
-        predict_on_patient(folder_dir + patient + '/', vol_name, str(args.fold), patch_size, i, num_patients)
-    '''
