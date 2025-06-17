@@ -90,14 +90,15 @@ if __name__ == "__main__":
     if args.seed is not None:
         set_seed(args.seed)
     set_tf_flags(args)
-    model = load_model(args)
+    #model = load_model(args)
     #
     #PREDICT ON IMAGES FROM CSV
     vol_name = 'T1C_RAI_RESAMPLED_N4_SS_REG_NORM.nii.gz'
     patch_size = np.array([128]*3)
-    df_csv = pd.read_csv(args.data, index_col=0)
-    patients = list(df_csv['Test_Set_Patient_File_Path'])
-    num_patients = len(patients)
-    for i, patient in enumerate(patients):
-        predict_on_patient(patient + '/', vol_name, str(args.fold), patch_size, i, num_patients)
+    #df_csv = pd.read_csv(args.data, index_col=0)
+    #patients = list(df_csv['Test_Set_Patient_File_Path'])
+    #num_patients = len(patients)
+    #for i, patient in enumerate(patients):
+    #    predict_on_patient(patient + '/', vol_name, str(args.fold), patch_size, i, num_patients)
     #
+    print('HI MOM!')
