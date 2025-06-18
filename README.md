@@ -30,9 +30,18 @@ docker build -t brain_mets_seg .
 
 ## Preprocessing
 
+Before running segmentation, all data must be preprocessed. Our preprocessing pipeline is as follows: 1) resample all data to 1mm isotropic resolution, 2) N4 bias correction, 3) skull strip, 4) affine registration of all patient timepoints to the baseline scan, and 5) zero mean, unit variance intensity normalization (based on foreground voxels only). The preprocessing pipeline is currently located here: `https://github.com/QTIM-Lab/preprocessing`. Please follow the instructions on this github link to preprocess your data accordingly.
+
 ## Automatic Segmentation
 
-S
+To run the segmentation docker container on the preprocessed images, you must create a csv file called `files_to_segment.csv`, which contains the full directory path to all images you wish to segment, and the names of those files. An example is shown below:
+
+Full_Patient_File_Path,            T1_CE_Volume_Name
+</full/file/path/to/image/one/>,   <image_one_name>
+</full/file/path/to/image/two/>,   <image_two_name>
+</full/file/path/to/image/three/>, <image_three_name>
+...
+
 
 ## Longitudinal Tracking
 
