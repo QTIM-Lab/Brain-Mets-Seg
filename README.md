@@ -34,7 +34,7 @@ Before running segmentation, all data must be preprocessed. Our preprocessing pi
 
 ## Automatic Segmentation
 
-To run the segmentation docker container on the preprocessed images, you must create a csv file called `files_to_segment.csv`, which contains the full directory path to all images you wish to segment, and the names of those files. An example is shown below:
+To run the segmentation docker container on the preprocessed images (which should now be in NIFTI format (i.e. .nii.gz file ending)), you must create a csv file called `files_to_segment.csv`, which contains the full directory path to all images you wish to segment, and the names of those files. An example is shown below:
 
 | Full_Patient_File_Path | T1_CE_Volume_Name |
 | --- | --- |
@@ -43,7 +43,19 @@ To run the segmentation docker container on the preprocessed images, you must cr
 | </full/file/path/to/image/three/> | <image_three_file_name> |
 | ... | ... |
 
+Once you have such a csv file, you can mount the directory with the csv (and any other data you need) to the docker container as follows:
 
+```
+docker run -it --privileged --runtime=nvidia --shm-size=8g --ulimit memlock=-1 --ulimit stack=67108864 --rm -v </full/path/to/csv/dir/>:/workspace/brain_mets_seg/data brain_mets_seg:latest /bin/bash
+```
+
+Once inside the docker container, you can segment the cases in your csv file as follows:
+
+```
+python predict.py
+```
+
+This will segment every scan using an ensemble of five models. This process will create three output files per segmentation. First, it will output an ensembled probability map called "model_ensemble_probability_map.nii.gz". Second, it will output an ensembled binary label map called "model_ensemble-label.nii.gz". And third, it will output a voxelwise uncertainty map called "model_ensemble_uncertainty_entropy_map.nii.gz".
 
 ## Longitudinal Tracking
 
