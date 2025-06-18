@@ -37,9 +37,13 @@ Before running segmentation, all data must be preprocessed. Our preprocessing pi
 To run the segmentation docker container on the preprocessed images, you must create a csv file called `files_to_segment.csv`, which contains the full directory path to all images you wish to segment, and the names of those files. An example is shown below:
 
 Full_Patient_File_Path,            T1_CE_Volume_Name
+
 </full/file/path/to/image/one/>,   <image_one_name>
+
 </full/file/path/to/image/two/>,   <image_two_name>
+
 </full/file/path/to/image/three/>, <image_three_name>
+
 ...
 
 
