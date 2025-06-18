@@ -17,6 +17,8 @@ We use a nearly identical network architecture, optimizer setting, and data augm
 
 A diagram of the architecture is shown below.
 
+<img src="images/3D_UNet.png" width="900"/>
+
 ## Setup
 
 T
