@@ -59,7 +59,24 @@ This will segment every scan using an ensemble of five models. This process will
 
 ## Longitudinal Tracking
 
-G
+If you have longitudinal patient data, you can also use the longitudinal tracking scripts in order to volumetrically track individual lesions across time. In order to use these scripts, your data must be organized in a certain way. Specifically, patient data should be organized such that all timepoints for a patient are inside one folder. An example folder structure is shown below:
+
+Data
+├── Patient_1/
+│ ├── Visit_1/
+│ │ └── model_ensemble-label.nii.gz
+│ ├── Visit_2/
+│ │ └── model_ensemble-label.nii.gz
+│ └── Visit_3/
+│   └── model_ensemble-label.nii.gz
+├── Patient_2/
+│ └── Visit_1/
+│   └── model_ensemble-label.nii.gz
+└── Patient_2/
+  ├── Visit_1/
+  │ └── model_ensemble-label.nii.gz
+  └── Visit_2/
+    └── model_ensemble-label.nii.gz
 
 ## Auto-RANO-BM
 
