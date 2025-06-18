@@ -21,10 +21,11 @@ A diagram of the architecture is shown below.
 
 ## Setup
 
-The simplest way to use the trained model is via docker container. First, clone this repository as follows:
+The simplest way to use the trained model is via docker container. To do this, clone this repository and then build a docker image named `brain_mets_seg` using the provided Dockerfile:
 
 ```
 git clone https://github.com/QTIM-Lab/Brain-Mets-Seg.git
+docker build -t brain_mets_seg .
 ```
 
 ## Preprocessing
