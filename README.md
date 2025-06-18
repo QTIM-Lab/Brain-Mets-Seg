@@ -59,10 +59,10 @@ This will segment every scan using an ensemble of five models. This process will
 
 ## Longitudinal Tracking
 
-If you have longitudinal patient data, you can also use the longitudinal tracking scripts in order to volumetrically track individual lesions across time. In order to use these scripts, your data must be organized in a certain way. Specifically, patient data should be organized such that all timepoints for a patient are inside one folder. An example folder structure is shown below:
+If you have longitudinal patient data, you can also use the longitudinal tracking scripts in order to volumetrically track individual lesions across time. In order to use these scripts, your data must be organized in a certain way. Specifically, patient data should be organized such that all visits/timepoints for a patient are nested inside the main patient folder. An example of the required folder structure is shown below:
 
 ```
-Data
+files_to_track
 ├── Patient_1/
 │ ├── Visit_1/
 │ │ └── model_ensemble-label.nii.gz
@@ -73,13 +73,29 @@ Data
 ├── Patient_2/
 │ └── Visit_1/
 │   └── model_ensemble-label.nii.gz
-└── Patient_2/
+└── Patient_3/
   ├── Visit_1/
   │ └── model_ensemble-label.nii.gz
   └── Visit_2/
     └── model_ensemble-label.nii.gz
 ```
 
+Once your data is organized like this, you can mount this data directory to your dockerin the same exact way as before. To run longitudinal tracking, you can use the following command from inside the docker:
+
+```
+python longitudinal_tracking.py
+```
+
+This will save out an additional label map called "model_ensemble_TRACKED-label.nii.gz", where every lesion is given a unique numerical identifier to allow it to be volumetrically tracked over time.
+
 ## Auto-RANO-BM
 
-G
+Once all patient imaging has been longitudinally tracked, you can use the Auto-RANO-BM script to calculate the RANO-BM measure on every timepoint, and categorize them as progressive disease (PD), stable disease (SD), partial response (PR), or complete response (CR) as outlined by the RANO-BM working group.
+
+To do this, simply run the following command from inside the docker:
+
+```
+python calculate_rano_bm.py
+```
+
+This will output a csv file called "files_to_track_rano.csv", which will contain the number of lesions, the total tumor burden, the target tumor burden, the RANO-BM measure, and the response category.
