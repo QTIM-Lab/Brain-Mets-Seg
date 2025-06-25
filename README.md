@@ -25,6 +25,7 @@ The simplest way to use the trained model is via docker container. To do this, c
 
 ```
 git clone https://github.com/QTIM-Lab/Brain-Mets-Seg.git
+cd Brain-Mets-Seg
 docker build -t brain_mets_seg .
 ```
 
